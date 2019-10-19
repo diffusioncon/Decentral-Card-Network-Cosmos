@@ -92,3 +92,31 @@ func GetCmdCardList(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		},
 	}
 }
+
+// GetCmdVotableCardList looks up the cards votable by a user
+func GetCmdVotableCardList(queryRoute string, cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "votable-cards [name]",
+		Short: "Query cards votable by a user.",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
+			name := args[0]
+
+			res, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/votable-cards/%s", queryRoute, name), nil)
+			if err != nil {
+				fmt.Printf("could not get query names\n")
+				return nil
+			}
+
+			fmt.Println(string(res))
+
+			return nil
+/*
+			var out cardservice.QueryResCards
+			cdc.MustUnmarshalJSON(res, &out)
+			return cliCtx.PrintOutput(out)
+			*/
+		},
+	}
+}

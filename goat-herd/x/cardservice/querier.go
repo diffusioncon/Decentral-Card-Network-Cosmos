@@ -17,6 +17,7 @@ const (
 	QueryResolve = "resolve"
 	QueryWhois   = "whois"
 	QueryNames   = "cards"
+	QueryVotableCards = "votable-cards"
 )
 
 // NewQuerier is the module level router for state queries
@@ -29,6 +30,8 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 			return queryWhois(ctx, path[1:], req, keeper)
 		case QueryNames:
 			return queryCards(ctx, req, keeper)
+		case QueryVotableCards:
+			return queryVotableCards(ctx, req, keeper)
 		default:
 			return nil, sdk.ErrUnknownRequest("unknown cardservice query endpoint")
 		}
@@ -126,4 +129,31 @@ type QueryResCards []string
 // implement fmt.Stringer
 func (n QueryResCards) String() string {
 	return strings.Join(n[:], "\n")
+}
+
+func queryVotableCards(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (res []byte, err sdk.Error) {
+	var cardsList QueryResCards
+
+	iterator := keeper.GetCardsIterator(ctx)
+
+	for ; iterator.Valid(); iterator.Next() {
+
+		var gottenCard Card
+		keeper.cdc.MustUnmarshalBinaryBare(iterator.Value(), &gottenCard)
+
+		// TODO check if json.Marshal is fair enough here
+		b, err := json.Marshal(gottenCard)
+		if err != nil {
+			panic("could not marshal gottenCard to JSON")
+		}
+
+		cardsList = append(cardsList, string(b))
+	}
+
+	bz, err2 := codec.MarshalJSONIndent(keeper.cdc, cardsList)
+	if err2 != nil {
+		panic("could not marshal result to JSON")
+	}
+
+	return bz, nil
 }

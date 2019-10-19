@@ -367,6 +367,24 @@ func resolveCardsHandler(cdc *codec.Codec, cliCtx context.CLIContext, storeName 
 	}
 }
 
+func resolveVotableCardsHandler(cdc *codec.Codec, cliCtx context.CLIContext, storeName string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("storeName")
+		fmt.Println(storeName)
+		vars := mux.Vars(r)
+		name := vars[restName]
+		fmt.Println(name)
+
+		res, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/votable-cards/%s", storeName, name), nil)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
+			return
+		}
+
+		rest.PostProcessResponse(w, cdc, res, cliCtx.Indent)
+	}
+}
+
 func whoIsHandler(cdc *codec.Codec, cliCtx context.CLIContext, userAddress string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)

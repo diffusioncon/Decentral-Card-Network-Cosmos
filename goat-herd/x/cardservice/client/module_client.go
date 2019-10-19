@@ -29,6 +29,7 @@ func (mc ModuleClient) GetQueryCmd() *cobra.Command {
 		cardservicecmd.GetCmdCard(mc.storeKey, mc.cdc),
 		cardservicecmd.GetCmdWhois(mc.storeKey, mc.cdc),
 		cardservicecmd.GetCmdCardList(mc.storeKey, mc.cdc),
+		cardservicecmd.GetCmdVotableCardList(mc.storeKey, mc.cdc),
 	)...)
 
 	return cardserviceQueryCmd
