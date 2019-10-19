@@ -258,7 +258,7 @@ export default {
           'content': newCard,
           'cardid': '1'
         }).then(response => {
-          console.log(response.data)
+        console.log(response.data)
         let signed = signTx(response.data, localStorage.cosmosMnemonic, 'testCardchain', localStorage.cosmosAccountNumber, 1)
         console.log(signed)
       })

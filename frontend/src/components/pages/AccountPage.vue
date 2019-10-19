@@ -1,16 +1,35 @@
 <template>
   <div>
     <h2>Account Settings</h2>
-    <hr>
     <h3>Cosmos Settings</h3>
-    <p>Mnemonic: <input name="mnemonic"></p>
-    <p>Address: <input name="address"></p>
+    <br>
+    <p>Mnemonic: <input v-model="mnemonic" name="mnemonic"></p>
+    <p>Address: <input v-model="address" name="address"></p>
+    <br>
+    <button @click="save()">Change</button>
+    <br><br>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'AccountPage'
+  name: 'AccountPage',
+  data () {
+    return {
+      mnemonic: '',
+      address: ''
+    }
+  },
+  mounted () {
+    this.mnemonic = localStorage.cosmosMnemonic
+    this.address = localStorage.cosmosAddress
+  },
+  methods: {
+    save () {
+      localStorage.cosmosMnemonic = this.mnemonic
+      localStorage.cosmosAddress = this.address
+    }
+  }
 }
 </script>
 
