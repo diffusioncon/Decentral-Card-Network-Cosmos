@@ -243,7 +243,7 @@ export default {
       }
 
       axios.put(
-        'http://v22 0190910354396996.luckysrv.de:1500/cardservice/save_card_content',
+        'http://v220190910354396996.luckysrv.de:1500/cardservice/save_card_content',
         {
           'base_req': {
             'from': localStorage.cosmosPubkey,
@@ -270,15 +270,6 @@ export default {
 </script>
 
 <style scoped>
-  input {
-    background-color: transparent;
-    border: none;
-    border-bottom: 2px solid white;
-    color: white;
-    font-size: 1em;
-    font-family: "Museo", sans-serif;
-  }
-
   select {
     background-color: transparent;
     border: 2px solid white;
