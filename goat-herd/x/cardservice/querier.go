@@ -1,10 +1,10 @@
 package cardservice
 
 import (
-	"fmt"
-	"strings"
-	"strconv"
 	"encoding/json"
+	"fmt"
+	"strconv"
+	"strings"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 
@@ -14,9 +14,9 @@ import (
 
 // query endpoints supported by the cardservice Querier
 const (
-	QueryResolve = "resolve"
-	QueryWhois   = "whois"
-	QueryNames   = "cards"
+	QueryResolve      = "resolve"
+	QueryWhois        = "whois"
+	QueryNames        = "cards"
 	QueryVotableCards = "votable-cards"
 )
 
@@ -31,7 +31,7 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 		case QueryNames:
 			return queryCards(ctx, req, keeper)
 		case QueryVotableCards:
-			return queryVotableCards(ctx, req, keeper)
+			return queryVotableCards(ctx, path[1:], req, keeper)
 		default:
 			return nil, sdk.ErrUnknownRequest("unknown cardservice query endpoint")
 		}
@@ -40,7 +40,7 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 
 // nolint: unparam
 func queryResolve(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Keeper) (res []byte, err sdk.Error) {
-	cardId, error := strconv.ParseUint(path[0], 10, 64);
+	cardId, error := strconv.ParseUint(path[0], 10, 64)
 	if error != nil {
 		return nil, sdk.ErrUnknownRequest("could not parse cardId")
 	}
@@ -131,7 +131,14 @@ func (n QueryResCards) String() string {
 	return strings.Join(n[:], "\n")
 }
 
-func queryVotableCards(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (res []byte, err sdk.Error) {
+func queryVotableCards(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Keeper) (res []byte, err sdk.Error) {
+	address, error := sdk.AccAddressFromBech32(path[0])
+	if error != nil {
+		return nil, sdk.ErrUnknownRequest("could not parse user address")
+	}
+
+	user := keeper.GetUser(ctx, address)
+
 	var cardsList QueryResCards
 
 	iterator := keeper.GetCardsIterator(ctx)
@@ -139,7 +146,9 @@ func queryVotableCards(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (r
 	for ; iterator.Valid(); iterator.Next() {
 
 		var gottenCard Card
+		var cardId uint64
 		keeper.cdc.MustUnmarshalBinaryBare(iterator.Value(), &gottenCard)
+		keeper.cdc.MustUnmarshalBinaryBare(iterator.Key(), &cardId)
 
 		// TODO check if json.Marshal is fair enough here
 		b, err := json.Marshal(gottenCard)
@@ -147,7 +156,10 @@ func queryVotableCards(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (r
 			panic("could not marshal gottenCard to JSON")
 		}
 
-		cardsList = append(cardsList, string(b))
+		var voteRight = SearchVoteRights(cardId, user.VoteRights)
+		if voteRight >= 0 {
+			cardsList = append(cardsList, string(b))
+		}
 	}
 
 	bz, err2 := codec.MarshalJSONIndent(keeper.cdc, cardsList)
