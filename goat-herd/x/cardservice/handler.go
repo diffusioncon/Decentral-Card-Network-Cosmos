@@ -97,7 +97,7 @@ func handleMsgVoteCard(ctx sdk.Context, keeper Keeper, msg MsgVoteCard) sdk.Resu
 	}
 
 	//check if voting rights are timed out
-	if ctx.BlockHeight() > voteRights[rightsIndex].expireBlock {
+	if ctx.BlockHeight() > voteRights[rightsIndex].ExpireBlock {
 		return ErrVoteRightHasExpired().Result()
 	}
 
@@ -140,7 +140,7 @@ func SearchVoteRights(cardID uint64, rights []VoteRight) int {
 		return -1
 	}
 	for i, b := range rights {
-		if b.cardId == cardID {
+		if b.CardId == cardID {
 			return i
 		}
 	}
