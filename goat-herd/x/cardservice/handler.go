@@ -88,7 +88,6 @@ func handleMsgSaveCardContent(ctx sdk.Context, keeper Keeper, msg MsgSaveCardCon
 
 // handle vote card message
 func handleMsgVoteCard(ctx sdk.Context, keeper Keeper, msg MsgVoteCard) sdk.Result {
-
 	voteRights := keeper.GetVoteRights(ctx, msg.Voter)
 	rightsIndex := SearchVoteRights(msg.CardId, voteRights)
 
@@ -137,6 +136,9 @@ func handleMsgVoteCard(ctx sdk.Context, keeper Keeper, msg MsgVoteCard) sdk.Resu
 }
 
 func SearchVoteRights(cardID uint64, rights []VoteRight) int {
+	if rights == nil {
+		return -1
+	}
 	for i, b := range rights {
 		if b.cardId == cardID {
 			return i
