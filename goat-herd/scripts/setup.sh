@@ -1,3 +1,5 @@
+#!/bin/bash
+
 rm ~/.csd/ -r
 csd init --chain-id testCardchain
 printf 'asdfasdf\n' | cscli keys delete alice
