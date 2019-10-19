@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto+Slab&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #f29121ff url("../background.svg") no-repeat;
+  background-size: cover;
+  color: #ffffff;
+  font-family: "Roboto Slab", sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.2;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: rgb(225, 224, 220);
+}
+
+main {
+  font-size: 32px;
+  text-shadow: 3px 3px 0px #00000080;
+  max-width: 70vw;
+  margin: auto;
+}
+
+button {
+  background-color: white;
+  color: black;
+  font-size: 120%;
+  padding: 0.3em 1em;
+  box-shadow: 7px 7px 0 black;
+  border: none;
+  cursor: pointer;
+}
+
+.creator {
+  line-height: 1.5em;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+}
