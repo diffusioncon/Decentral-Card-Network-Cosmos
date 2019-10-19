@@ -26,6 +26,7 @@ func corsMiddleware(next http.Handler) http.Handler {
 		w.Header().Set("Access-Control-Allow-Methods", "GET,OPTIONS,PUT,POST,DELETE")
 		w.Header().Set("Access-Control-Allow-Headers", "*")
 		w.Header().Set("Access-Control-Max-Age", "86400")
+
 		next.ServeHTTP(w, r)
 	})
 
@@ -45,6 +46,7 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, cdc *codec.Codec, 
 	r.HandleFunc(fmt.Sprintf("/%s/whois/{%s}", storeName, restName), whoIsHandler(cdc, cliCtx, storeName)).Methods(http.MethodGet)
 	r.HandleFunc(fmt.Sprintf("/%s/votable_cards/{%s}", storeName, restName), resolveVotableCardsHandler(cdc, cliCtx, storeName)).Methods(http.MethodGet)
 
+	r.Use(mux.CORSMethodMiddleware(r))
 	r.Use(corsMiddleware)
 }
 
