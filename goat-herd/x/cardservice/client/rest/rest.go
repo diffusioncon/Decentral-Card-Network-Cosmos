@@ -38,7 +38,7 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, cdc *codec.Codec, 
 	r.HandleFunc(fmt.Sprintf("/%s/donate_to_card", storeName), donateToCardHandler(cdc, cliCtx)).Methods(http.MethodPost, http.MethodOptions)
 	r.HandleFunc(fmt.Sprintf("/%s/create_user", storeName), createUserHandler(cdc, cliCtx)).Methods(http.MethodPut, http.MethodOptions)
 
-	r.HandleFunc(fmt.Sprintf("/%s/card/{%s}", storeName, restName), resolveCardHandler(cdc, cliCtx, storeName)).Methods(http.MethodGet)
+	r.HandleFunc(fmt.Sprintf("/%s/cards/{%s}", storeName, restName), resolveCardHandler(cdc, cliCtx, storeName)).Methods(http.MethodGet)
 	r.HandleFunc(fmt.Sprintf("/%s/cards", storeName), resolveCardsHandler(cdc, cliCtx, storeName)).Methods(http.MethodGet)
 	r.HandleFunc(fmt.Sprintf("/%s/whois/{%s}", storeName, restName), whoIsHandler(cdc, cliCtx, storeName)).Methods(http.MethodGet)
 	r.HandleFunc(fmt.Sprintf("/%s/votable_cards/{%s}", storeName, restName), resolveVotableCardsHandler(cdc, cliCtx, storeName)).Methods(http.MethodGet)
