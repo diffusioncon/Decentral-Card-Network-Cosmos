@@ -62,6 +62,13 @@ func NewCard(owner sdk.AccAddress) Card {
 }
 
 type VoteRight struct {
-	cardId      uint64
-	expireBlock int64
+	CardId      uint64
+	ExpireBlock int64
+}
+
+func NewVoteRight(cardId uint64, expireBlock int64) VoteRight {
+	return VoteRight{
+		CardId:      cardId,
+		ExpireBlock: expireBlock,
+	}
 }

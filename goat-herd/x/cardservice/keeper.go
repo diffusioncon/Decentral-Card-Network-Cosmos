@@ -118,6 +118,33 @@ func (k Keeper) GetUser(ctx sdk.Context, address sdk.AccAddress) User {
 	return gottenUser
 }
 
+func (k Keeper) AddVotingRightsToUsers(ctx sdk.Context, expireAfterBlocks int64) {
+	cardStore := ctx.KVStore(k.cardsStoreKey)
+	cardIterator := sdk.KVStorePrefixIterator(cardStore, nil)
+
+	votingRights := []VoteRight{}
+
+	for ; cardIterator.Valid(); cardIterator.Next() {
+		right := NewVoteRight(binary.BigEndian.Uint64(cardIterator.Key()), expireAfterBlocks)
+		votingRights = append(votingRights, right)
+	}
+
+	cardIterator.Close()
+
+	userStore := ctx.KVStore(k.usersStoreKey)
+
+	userIterator := sdk.KVStorePrefixIterator(userStore, nil)
+
+	for ; userIterator.Valid(); userIterator.Next() {
+		var user User
+		k.cdc.MustUnmarshalBinaryBare(userIterator.Value(), &user)
+		user.VoteRights = votingRights
+		userStore.Set(userIterator.Key(), k.cdc.MustMarshalBinaryBare(user))
+	}
+
+	userIterator.Close()
+}
+
 func (k Keeper) SetUser(ctx sdk.Context, address sdk.AccAddress, userData User) {
 	store := ctx.KVStore(k.usersStoreKey)
 	store.Set(address, k.cdc.MustMarshalBinaryBare(userData))
