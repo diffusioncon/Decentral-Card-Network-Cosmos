@@ -5,7 +5,9 @@
       @throwin="throwin"
       :config="config"
     >
-      <div class="box">Throw me!</div>
+      <div class="box">
+        <CardComponent></CardComponent>
+      </div>
     </vue-swing>
     <p v-if="$route.query.redirect">Bitte logge dich ein!</p>
     <p v-if="loginError">Login fehlgeschlagen!</p>
@@ -31,9 +33,10 @@
 
 <script>
 import ContentContainerComponent from '@/components/ContentContainerComponent'
+import CardComponent from '../CardComponent'
 export default {
   name: 'LoginPage',
-  components: {ContentContainerComponent},
+  components: {CardComponent, ContentContainerComponent},
   data () {
     return {
       loginError: null,
