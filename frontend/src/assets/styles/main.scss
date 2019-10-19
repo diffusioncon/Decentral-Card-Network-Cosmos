@@ -57,3 +57,7 @@ input {
   font-size: 1em;
   font-family: "Museo", sans-serif;
 }
+
+input::placeholder {
+  color: lightgray;
+}

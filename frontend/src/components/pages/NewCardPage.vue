@@ -122,7 +122,7 @@ import ContentContainerComponent from '@/components/ContentContainerComponent'
 import $RefParser from 'json-schema-ref-parser'
 import CardComponent from '../CardComponent'
 
-import signTx from 'signcosmostx/signStuff'
+import { signTx } from 'signcosmostx/signStuff'
 
 export default {
   name: 'NewCardPage',
@@ -242,21 +242,26 @@ export default {
         }
       }
 
+      axios.get('http://v220190910354396996.luckysrv.de:1500/auth/accounts/' + localStorage.cosmosAddress).then(response => {
+      })
+
       axios.put(
         'http://v220190910354396996.luckysrv.de:1500/cardservice/save_card_content',
         {
           'base_req': {
-            'from': localStorage.cosmosPubkey,
-            'chain_id': this.chainID,
+            'from': localStorage.cosmosAddress,
+            'chain_id': 'testCardchain',
             'gas': 'auto',
             'gas_adjustment': '1.5'
           },
-          'owner': localStorage.cosmosPubkey,
+          'owner': localStorage.cosmosAddress,
           'content': newCard,
           'cardid': '1'
-        }).then(response => (
-        signTx(response.data, localStorage.cosmosMnemonic, this.chainID, null, null)
-      ))
+        }).then(response => {
+          console.log(response.data)
+        let signed = signTx(response.data, localStorage.cosmosMnemonic, 'testCardchain', localStorage.cosmosAccountNumber, 1)
+        console.log(signed)
+      })
     }
   },
   saveDraft () {
