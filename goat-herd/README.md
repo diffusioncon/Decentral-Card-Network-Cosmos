@@ -1,16 +1,13 @@
-# SDK Application Tutorial
+Decentral-card.net Cardchain // Crowd Control Chain
 
-This repository contains the source code of the nameservice tutorial.
+install go version 1.11 or higher
 
-## Tutorial
+make install
 
-**[Click here](./tutorial/README.md)** to access the tutorial. You can also view it on the [website](https://cosmos.network/docs/tutorial).
+sh scripts/setup.sh
 
-## Building and running the example
+csd start
 
-**[Click here](./tutorial/build-run.md)**  for instructions on how to build and run the code.
+cscli help
 
-Translations:
-- [中文](./README_cn.md)
-
-## [Slides](https://docs.google.com/presentation/d/1aCMAdkVY-gfgnGNPTygwVk3o68czPQ_VYfvdMy9Ek5Q/edit?usp=sharing)
+see /scripts (jq needed)

@@ -13,3 +13,13 @@ build
 # IDE
 .idea/
 *.iml
+
+# Tests
+/scripts/nohup.out
+/scripts/signedTx.json
+/scripts/unsignedTx.json
+/tests/signedTx.json
+/tests/unsignedTx.json
+
+# misc
+nohup.out
