@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <notifications group="foo" />
     <PageHeader/>
     <PageMenu/>
     <main>
@@ -8,6 +7,7 @@
         <router-view/>
       </div>
     </main>
+    <notifications group="foo" />
     <PageFooter/>
   </div>
 </template>

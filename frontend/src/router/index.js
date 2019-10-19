@@ -5,7 +5,7 @@ import NewCardPage from '@/components/pages/NewCardPage'
 import AboutPage from '@/components/pages/AboutPage'
 import LoginPage from '@/components/pages/LoginPage'
 import RegisterPage from '@/components/pages/RegisterPage'
-import AccountPage from '../components/pages/AccountPage'
+import VotingPage from '../components/pages/VotingPage'
 
 Vue.use(Router)
 
@@ -38,8 +38,13 @@ export default new Router({
     },
     {
       path: '/me',
-      name: 'Account',
-      component: AccountPage
+      name: 'Registrieren',
+      component: RegisterPage
+    },
+    {
+      path: '/vote',
+      name: 'Vote',
+      component: VotingPage
     }
   ]
 })

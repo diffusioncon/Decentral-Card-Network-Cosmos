@@ -243,24 +243,32 @@ export default {
       }
 
       axios.get('http://v220190910354396996.luckysrv.de:1500/auth/accounts/' + localStorage.cosmosAddress).then(response => {
+
       })
+
+      let request = {
+        'base_req': {
+          'from': localStorage.cosmosAddress,
+          'chain_id': 'testCardchain',
+          'gas': 'auto',
+          'gas_adjustment': '1.5'
+        },
+        'owner': localStorage.cosmosAddress,
+        'content': 'shitcard',
+        'cardid': '1'
+      }
 
       axios.put(
         'http://v220190910354396996.luckysrv.de:1500/cardservice/save_card_content',
-        {
-          'base_req': {
-            'from': localStorage.cosmosAddress,
-            'chain_id': 'testCardchain',
-            'gas': 'auto',
-            'gas_adjustment': '1.5'
-          },
-          'owner': localStorage.cosmosAddress,
-          'content': newCard,
-          'cardid': '1'
-        }).then(response => {
-        console.log(response.data)
+        request).then(response => {
         let signed = signTx(response.data, localStorage.cosmosMnemonic, 'testCardchain', localStorage.cosmosAccountNumber, 1)
         console.log(signed)
+        axios.post('http://v220190910354396996.luckysrv.de:1500/txs', signed).then(response => {
+          console.log(response)
+        })
+      }).catch(function (error) {
+        // handle error
+        console.log(error)
       })
     }
   },
