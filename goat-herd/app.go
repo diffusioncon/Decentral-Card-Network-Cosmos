@@ -2,17 +2,17 @@ package app
 
 import (
 	//"fmt"
-	"strconv"
 	"encoding/json"
+	"strconv"
 
 	"github.com/tendermint/tendermint/libs/log"
 
+	"github.com/DecentralCardGame/Cardchain/x/cardservice"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/bank"
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/cosmos/cosmos-sdk/x/staking"
-	"github.com/DecentralCardGame/Cardchain/x/cardservice"
 
 	bam "github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -34,7 +34,7 @@ type cardserviceApp struct {
 	keyAccount       *sdk.KVStoreKey
 	keyCScards       *sdk.KVStoreKey
 	keyCSusers       *sdk.KVStoreKey
-	keyCSinternal		 *sdk.KVStoreKey
+	keyCSinternal    *sdk.KVStoreKey
 	keyFeeCollection *sdk.KVStoreKey
 	keyParams        *sdk.KVStoreKey
 	tkeyParams       *sdk.TransientStoreKey
@@ -63,8 +63,8 @@ func NewCardserviceApp(logger log.Logger, db dbm.DB) *cardserviceApp {
 		keyMain:          sdk.NewKVStoreKey("main"),
 		keyAccount:       sdk.NewKVStoreKey("acc"),
 		keyCScards:       sdk.NewKVStoreKey("cs_cards"),
-		keyCSusers:	      sdk.NewKVStoreKey("cs_users"),
-		keyCSinternal:		sdk.NewKVStoreKey("cs_internal"),
+		keyCSusers:       sdk.NewKVStoreKey("cs_users"),
+		keyCSinternal:    sdk.NewKVStoreKey("cs_internal"),
 		keyFeeCollection: sdk.NewKVStoreKey("fee_collection"),
 		keyParams:        sdk.NewKVStoreKey("params"),
 		tkeyParams:       sdk.NewTransientStoreKey("transient_params"),
@@ -140,6 +140,9 @@ func NewCardserviceApp(logger log.Logger, db dbm.DB) *cardserviceApp {
 	return app
 }
 
+// epochBlockTime defines how many blocks are one game epoch
+const epochBlockTime = 10
+
 func (app *cardserviceApp) blockHandler(ctx sdk.Context, req abci.RequestEndBlock) abci.ResponseEndBlock {
 	//app.Logger.Info("currId: "+strconv.FormatUint(app.csKeeper.GetLastCardSchemeId(ctx),10))
 
@@ -149,7 +152,7 @@ func (app *cardserviceApp) blockHandler(ctx sdk.Context, req abci.RequestEndBloc
 	app.csKeeper.SetCardAuctionPrice(ctx, newprice)
 
 	// automated nerf/buff happens here // TODO adjust the mod10 here
-	if app.LastBlockHeight() % 10 == 0 {
+	if app.LastBlockHeight()%epochBlockTime == 0 {
 		cardservice.UpdateNerfLevels(ctx, app.csKeeper)
 	}
 
@@ -186,7 +189,6 @@ func (app *cardserviceApp) initChainer(ctx sdk.Context, req abci.RequestInitChai
 	app.csKeeper.SetLastCardSchemeId(ctx, uint64(0))
 	app.csKeeper.SetCardAuctionPrice(ctx, sdk.NewInt64Coin("credits", 10))
 	app.csKeeper.SetPublicPoolCredits(ctx, sdk.NewInt64Coin("credits", 1000))
-
 
 	return abci.ResponseInitChain{}
 }
