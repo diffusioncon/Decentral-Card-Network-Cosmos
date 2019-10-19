@@ -29,19 +29,19 @@ func corsMiddleware(next http.Handler) http.Handler {
 
 // RegisterRoutes - Central function to define routes that get registered by the main application
 func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, cdc *codec.Codec, storeName string) {
-	r.HandleFunc(fmt.Sprintf("/%s/buy_card_scheme", storeName), buyCardSchemeHandler(cdc, cliCtx)).Methods("POST")
-	r.HandleFunc(fmt.Sprintf("/%s/save_card_content", storeName), saveCardContentHandler(cdc, cliCtx)).Methods("PUT")
-	r.HandleFunc(fmt.Sprintf("/%s/vote_card", storeName), voteCardHandler(cdc, cliCtx)).Methods("PUT")
-	r.HandleFunc(fmt.Sprintf("/%s/transfer_card", storeName), transferCardHandler(cdc, cliCtx)).Methods("POST")
-	r.HandleFunc(fmt.Sprintf("/%s/donate_to_card", storeName), donateToCardHandler(cdc, cliCtx)).Methods("POST")
-	r.HandleFunc(fmt.Sprintf("/%s/create_user", storeName), createUserHandler(cdc, cliCtx)).Methods("PUT")
+	r.HandleFunc(fmt.Sprintf("/%s/buy_card_scheme", storeName), buyCardSchemeHandler(cdc, cliCtx)).Methods(http.MethodPost, http.MethodOptions)
+	r.HandleFunc(fmt.Sprintf("/%s/save_card_content", storeName), saveCardContentHandler(cdc, cliCtx)).Methods(http.MethodPut, http.MethodOptions)
+	r.HandleFunc(fmt.Sprintf("/%s/vote_card", storeName), voteCardHandler(cdc, cliCtx)).Methods(http.MethodPut, http.MethodOptions)
+	r.HandleFunc(fmt.Sprintf("/%s/transfer_card", storeName), transferCardHandler(cdc, cliCtx)).Methods(http.MethodPost, http.MethodOptions)
+	r.HandleFunc(fmt.Sprintf("/%s/donate_to_card", storeName), donateToCardHandler(cdc, cliCtx)).Methods(http.MethodPost, http.MethodOptions)
+	r.HandleFunc(fmt.Sprintf("/%s/create_user", storeName), createUserHandler(cdc, cliCtx)).Methods(http.MethodPut, http.MethodOptions)
 
-	r.HandleFunc(fmt.Sprintf("/%s/card/{%s}", storeName, restName), resolveCardHandler(cdc, cliCtx, storeName)).Methods("GET")
-	r.HandleFunc(fmt.Sprintf("/%s/cards", storeName), resolveCardsHandler(cdc, cliCtx, storeName)).Methods("GET")
-	r.HandleFunc(fmt.Sprintf("/%s/whois/{%s}", storeName, restName), whoIsHandler(cdc, cliCtx, storeName)).Methods("GET")
-	r.HandleFunc(fmt.Sprintf("/%s/votable-cards/{%s}", storeName, restName), resolveVotableCardsHandler(cdc, cliCtx, storeName)).Methods("GET")
+	r.HandleFunc(fmt.Sprintf("/%s/card/{%s}", storeName, restName), resolveCardHandler(cdc, cliCtx, storeName)).Methods(http.MethodGet)
+	r.HandleFunc(fmt.Sprintf("/%s/cards", storeName), resolveCardsHandler(cdc, cliCtx, storeName)).Methods(http.MethodGet)
+	r.HandleFunc(fmt.Sprintf("/%s/whois/{%s}", storeName, restName), whoIsHandler(cdc, cliCtx, storeName)).Methods(http.MethodGet)
+	r.HandleFunc(fmt.Sprintf("/%s/votable_cards/{%s}", storeName, restName), resolveVotableCardsHandler(cdc, cliCtx, storeName)).Methods(http.MethodGet)
 
-  r.Use(mux.CORSMethodMiddleware(r))
+  // r.Use(mux.CORSMethodMiddleware(r))
 	r.Use(corsMiddleware)
 }
 
