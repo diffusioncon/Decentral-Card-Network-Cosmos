@@ -10,7 +10,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import ContentContainerComponent from '@/components/ContentContainerComponent'
 import CardComponent from '@/components/CardComponent'
 
@@ -40,13 +39,11 @@ export default {
         ticks: 0,
         defense: 0,
         attack: 0
-      },
+      }
     }
   },
   mounted () {
-    axios
-      .get(this.apiURL + '/cardservice/cards')
-      .then(response => (this.cards = response.data))
+
   }
 }
 </script>

@@ -93,7 +93,10 @@ export default {
   name: 'CardComponent',
   props: {
     model: Object,
-    imageURL: String,
+    imageURL: {
+      type: String,
+      default: null
+    },
     activeStep: {
       type: Number,
       default: 3
@@ -111,7 +114,7 @@ export default {
   mounted: () => {
   },
   computed: {
-    viewBox() {
+    viewBox () {
       if (!this.displayNotes) {
         return '0 0 210 240'
       } else {

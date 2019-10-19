@@ -18,7 +18,7 @@ new Vue({
   el: '#app',
   router,
   data: {
-    apiURL: 'http://192.168.50.102:1317',
+    apiURL: 'http://v220190910354396996.luckysrv.de:1500',
     chainID: 'testCardchain'
   },
   components: { App },

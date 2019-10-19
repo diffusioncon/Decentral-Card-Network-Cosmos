@@ -104,8 +104,8 @@
           <button @click="saveDraft()">Save As Draft</button>
         </div>
         <br>
-        <button v-if="activeStep > 0" @click="activeStep--"><<</button>
-        <button v-if="activeStep < 4" @click="activeStep++">>></button>
+        <button v-if="activeStep > 0" @click="activeStep--">back</button>
+        <button v-if="activeStep < 4" @click="activeStep++">next</button>
       </div>
       <div class="col-visual">
         <CardComponent v-bind:model="model"
@@ -231,7 +231,7 @@ export default {
     },
     saveSubmit () {
       let costArray = this.generateCostArray()
-      console.log({
+      let newCard = {
         [this.model.type]: {
           'Name': this.model.name,
           'Tag': this.model.tags,
@@ -240,15 +240,31 @@ export default {
           'CastSpeed': this.model.ticks,
           'Effects': {}
         }
-      })
-    },
-    saveDraft () {
-      localStorage.cardDraft = JSON.stringify(this.model)
-    },
-    onFileChange(e) {
-      const file = e.target.files[0];
-      this.url = URL.createObjectURL(file);
+      }
+
+      axios.put(
+        'http://v22 0190910354396996.luckysrv.de:1500/cardservice/save_card_content',
+        {
+          'base_req': {
+            'from': localStorage.cosmosPubkey,
+            'chain_id': this.chainID,
+            'gas': 'auto',
+            'gas_adjustment': '1.5'
+          },
+          'owner': localStorage.cosmosPubkey,
+          'content': newCard,
+          'cardid': '1'
+        }).then(response => (
+        signTx(response.data, localStorage.cosmosMnemonic, this.chainID, null, null)
+      ))
     }
+  },
+  saveDraft () {
+    localStorage.cardDraft = JSON.stringify(this.model)
+  },
+  onFileChange (e) {
+    const file = e.target.files[0]
+    this.url = URL.createObjectURL(file)
   }
 }
 </script>
