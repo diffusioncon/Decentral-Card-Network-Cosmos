@@ -141,10 +141,10 @@ func NewCardserviceApp(logger log.Logger, db dbm.DB) *cardserviceApp {
 }
 
 // epochBlockTime defines how many blocks are one game epoch
-const epochBlockTime = 3
+const epochBlockTime = 10
 
-// votingRightsExpirationTime defines after how many epochs a voting right expires by default
-const votingRightsExpirationTime = 10
+// votingRightsExpirationTime defines after how many blocks a voting right expires by default
+const votingRightsExpirationTime = 5
 
 func (app *cardserviceApp) blockHandler(ctx sdk.Context, req abci.RequestEndBlock) abci.ResponseEndBlock {
 	//app.Logger.Info("currId: "+strconv.FormatUint(app.csKeeper.GetLastCardSchemeId(ctx),10))
@@ -157,7 +157,7 @@ func (app *cardserviceApp) blockHandler(ctx sdk.Context, req abci.RequestEndBloc
 	// automated nerf/buff happens here // TODO adjust the mod10 here
 	if app.LastBlockHeight()%epochBlockTime == 0 {
 		cardservice.UpdateNerfLevels(ctx, app.csKeeper)
-		app.csKeeper.AddVotingRightsToUsers(ctx, votingRightsExpirationTime)
+		app.csKeeper.AddVotingRightsToUsers(ctx, ctx.BlockHeight()+votingRightsExpirationTime)
 	}
 
 	return abci.ResponseEndBlock{}
