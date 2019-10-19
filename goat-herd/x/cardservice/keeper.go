@@ -14,8 +14,8 @@ import (
 type Keeper struct {
 	coinKeeper bank.Keeper
 
-	cardsStoreKey  sdk.StoreKey // Unexposed key to access card store from sdk.Context
-	usersStoreKey  sdk.StoreKey // Unexposed key to access user store from sdk.Context
+	cardsStoreKey    sdk.StoreKey // Unexposed key to access card store from sdk.Context
+	usersStoreKey    sdk.StoreKey // Unexposed key to access user store from sdk.Context
 	internalStoreKey sdk.StoreKey // Unexposed key to access internal variables from sdk.Context
 
 	cdc *codec.Codec // The wire codec for binary encoding/decoding.
@@ -24,11 +24,11 @@ type Keeper struct {
 // NewKeeper creates new instances of the cardservice Keeper
 func NewKeeper(coinKeeper bank.Keeper, cardsStoreKey sdk.StoreKey, usersStoreKey sdk.StoreKey, internalStoreKey sdk.StoreKey, cdc *codec.Codec) Keeper {
 	return Keeper{
-		coinKeeper: 			coinKeeper,
-		cardsStoreKey:  	cardsStoreKey,
-		usersStoreKey: 		usersStoreKey,
+		coinKeeper:       coinKeeper,
+		cardsStoreKey:    cardsStoreKey,
+		usersStoreKey:    usersStoreKey,
 		internalStoreKey: internalStoreKey,
-		cdc:        			cdc,
+		cdc:              cdc,
 	}
 }
 
@@ -47,11 +47,11 @@ func (k Keeper) SetLastCardSchemeId(ctx sdk.Context, lastId uint64) {
 
 // returns the current price of the card scheme auction
 func (k Keeper) GetCardAuctionPrice(ctx sdk.Context) sdk.Coin {
-		store := ctx.KVStore(k.internalStoreKey)
-		bz := store.Get([]byte("currentCardSchemeAuctionPrice"))
-		var price sdk.Coin
-		k.cdc.MustUnmarshalBinaryBare(bz, &price)
-		return price
+	store := ctx.KVStore(k.internalStoreKey)
+	bz := store.Get([]byte("currentCardSchemeAuctionPrice"))
+	var price sdk.Coin
+	k.cdc.MustUnmarshalBinaryBare(bz, &price)
+	return price
 }
 
 // sets the current price of the card scheme auction
@@ -62,11 +62,11 @@ func (k Keeper) SetCardAuctionPrice(ctx sdk.Context, price sdk.Coin) {
 
 // gets the credits in the public pool
 func (k Keeper) GetPublicPoolCredits(ctx sdk.Context) sdk.Coin {
-		store := ctx.KVStore(k.internalStoreKey)
-		bz := store.Get([]byte("publicPoolCredits"))
-		var amount sdk.Coin
-		k.cdc.MustUnmarshalBinaryBare(bz, &amount)
-		return amount
+	store := ctx.KVStore(k.internalStoreKey)
+	bz := store.Get([]byte("publicPoolCredits"))
+	var amount sdk.Coin
+	k.cdc.MustUnmarshalBinaryBare(bz, &amount)
+	return amount
 }
 
 // sets the credits in the public pool
@@ -125,10 +125,8 @@ func (k Keeper) SetUser(ctx sdk.Context, address sdk.AccAddress, userData User) 
 
 func (k Keeper) SetUserName(ctx sdk.Context, address sdk.AccAddress, name string) {
 	store := ctx.KVStore(k.usersStoreKey)
-	bz := store.Get(address)
 
-	var gottenUser User
-	k.cdc.MustUnmarshalBinaryBare(bz, &gottenUser)
+	gottenUser := k.GetUser(ctx, address)
 
 	gottenUser.Alias = name
 
@@ -158,11 +156,8 @@ func (k Keeper) AddOwnedCard(ctx sdk.Context, cardId uint64, address sdk.AccAddr
 }
 
 func (k Keeper) GetVoteRights(ctx sdk.Context, voter sdk.AccAddress) []VoteRight {
-	store := ctx.KVStore(k.usersStoreKey)
-	bz := store.Get(voter)
-	var voteRights []VoteRight
-	k.cdc.MustUnmarshalBinaryBare(bz, &voteRights)
-	return voteRights
+	user := k.GetUser(ctx, voter)
+	return user.VoteRights
 }
 
 func (k Keeper) SetVoteRights(ctx sdk.Context, voteRights []VoteRight, voter sdk.AccAddress) {
@@ -185,7 +180,7 @@ func (k Keeper) NerfBuffCards(ctx sdk.Context, cardIds []uint64, buff bool) {
 		}
 
 		store.Set(sdk.Uint64ToBigEndian(val), k.cdc.MustMarshalBinaryBare(buffCard))
-	 }
+	}
 }
 
 func (k Keeper) ResetAllVotes(ctx sdk.Context) {
