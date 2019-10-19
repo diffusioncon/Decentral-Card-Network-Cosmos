@@ -23,7 +23,8 @@
     "vue": "^2.5.2",
     "vue-notification": "^1.3.16",
     "vue-router": "^3.0.1",
-    "vue-swing": "0.0.10"
+    "vue-swing": "0.0.10",
+    "signcosmostx": "git+https://github.com/DecentralCardGame/SignCosmosTx.git"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

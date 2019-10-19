@@ -1,5 +1,5 @@
 <template>
-  <svg xmlns="http://www.w3.org/2000/svg" width="700" viewBox="0 0 210 297" version="1">
+  <svg xmlns="http://www.w3.org/2000/svg" width="700" v-bind:viewBox="viewBox" version="1">
     <defs>
       <clipPath id="d">
         <path d="M0 0h1920v2800H0z"/>
@@ -14,7 +14,7 @@
         <path d="M1150 2115h349v214h-349z"/>
       </clipPath>
     </defs>
-    <path d="M50 222l-6 63 17-5 22 5 19-3 44 9 18-3 11 3-7-76-118 4z" fill="#12d1d1"/>
+    <path v-if="displayNotes" d="M50 222l-6 63 17-5 22 5 19-3 44 9 18-3 11 3-7-76-118 4z" fill="#12d1d1"/>
     <path d="M38 20v201h135l6-201z" fill="#fff"/>
     <path d="M34 216h137V15H34z" fill="#12d1d1"/>
     <path d="M35 128h135v-24H35zM58 212h89v-12H58zM35 195h135v-11H35z" fill="none" stroke="#000"/>
@@ -25,7 +25,7 @@
     <text y="208" x="80" style="-inkscape-font-specification:Museo-700" text-anchor="middle" font-weight="600" font-size="7" font-family="Museo 700" stroke-width="0">
       <tspan x="100" y="208">{{ model.type }}</tspan>
     </text>
-    <path d="M45 220l-5 62 16-5 22 5 19-2 44 9 18-3 12 3-7-69-119-3z" fill="#fff"/>
+    <path v-if="displayNotes" d="M45 220l-5 62 16-5 22 5 19-2 44 9 18-3 12 3-7-69-119-3z" fill="#fff"/>
     <text y="192" x="40" style="-inkscape-font-specification:Museo-700" text-anchor="middle" font-weight="600" font-size="7" font-family="Museo 700" stroke-width="0">
       <tspan x="105" y="192">{{ model.tags }}</tspan>
     </text>
@@ -79,7 +79,7 @@
     <text v-if="activeStep >= 1" y="98" x="152" style="-inkscape-font-specification:Museo-700" font-weight="600" font-size="9" font-family="Museo 700" fill="#d61224" stroke-width="0">
       <tspan x="152" y="98">{{ model.defense }}</tspan>
     </text>
-    <text v-if="activeStep >= 2" y="233" x="124" transform="skewX(-17)" style="-inkscape-font-specification:Museo-700" font-weight="600" font-size="7" font-family="Museo 700" stroke-width="0">
+    <text v-if="activeStep >= 2 && displayNotes" y="233" x="124" transform="skewX(-17)" style="-inkscape-font-specification:Museo-700" font-weight="600" font-size="7" font-family="Museo 700" stroke-width="0">
       <tspan x="124" y="233">{{ model.notes }}</tspan>
     </text>
     <image v-bind:xlink:href="imgURL" height="200" width="200"/>
@@ -91,10 +91,32 @@ import axios from 'axios'
 
 export default {
   name: 'CardComponent',
-  props: ['model', 'imageURL', 'activeStep'],
+  props: {
+    model: Object,
+    imageURL: String,
+    activeStep: {
+      type: Number,
+      default: 3
+    },
+    displayNotes: {
+      type: Boolean,
+      default: false
+    }
+  },
   data () {
     return {
       cardID: 0
+    }
+  },
+  mounted: () => {
+  },
+  computed: {
+    viewBox() {
+      if (!this.displayNotes) {
+        return '0 0 210 240'
+      } else {
+        return '0 0 210 297'
+      }
     }
   },
   methods: {

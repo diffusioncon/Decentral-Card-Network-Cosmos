@@ -109,7 +109,8 @@
       </div>
       <div class="col-visual">
         <CardComponent v-bind:model="model"
-                       v-bind:active-step="activeStep"></CardComponent>
+                       v-bind:active-step="activeStep"
+                        v-bind:display-notes="true"></CardComponent>
       </div>
     </div>
   </div>
@@ -120,6 +121,8 @@ import axios from 'axios'
 import ContentContainerComponent from '@/components/ContentContainerComponent'
 import $RefParser from 'json-schema-ref-parser'
 import CardComponent from '../CardComponent'
+
+import signTx from 'signcosmostx/signStuff'
 
 export default {
   name: 'NewCardPage',
