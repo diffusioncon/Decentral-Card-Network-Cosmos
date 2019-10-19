@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/DecentralCardGame/Cardchain/x/cardservice"
+	"github.com/cosmos/cosmos-sdk/client/context"
 
 	clientrest "github.com/cosmos/cosmos-sdk/client/rest"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -21,12 +21,14 @@ const (
 )
 
 func corsMiddleware(next http.Handler) http.Handler {
-    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			  w.Header().Set("Access-Control-Allow-Origin", "*")
-			  w.Header().Set("Access-Control-Allow-Methods", "GET,OPTIONS,PUT,POST,DELETE")
-			  w.Header().Set("Access-Control-Allow-Headers", "*")
-			  w.Header().Set("Access-Control-Max-Age", "86400")
-    })
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET,OPTIONS,PUT,POST,DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "*")
+		w.Header().Set("Access-Control-Max-Age", "86400")
+		next.ServeHTTP(w, r)
+	})
+
 }
 
 // RegisterRoutes - Central function to define routes that get registered by the main application
@@ -43,16 +45,14 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, cdc *codec.Codec, 
 	r.HandleFunc(fmt.Sprintf("/%s/whois/{%s}", storeName, restName), whoIsHandler(cdc, cliCtx, storeName)).Methods(http.MethodGet)
 	r.HandleFunc(fmt.Sprintf("/%s/votable_cards/{%s}", storeName, restName), resolveVotableCardsHandler(cdc, cliCtx, storeName)).Methods(http.MethodGet)
 
-  // r.Use(mux.CORSMethodMiddleware(r))
 	r.Use(corsMiddleware)
 }
 
 type buyCardSchemeReq struct {
 	BaseReq rest.BaseReq `json:"base_req"`
-	Amount  string        `json:"amount"`
-	Buyer   string        `json:"buyer"`
+	Amount  string       `json:"amount"`
+	Buyer   string       `json:"buyer"`
 }
-
 
 func buyCardSchemeHandler(cdc *codec.Codec, cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -94,11 +94,10 @@ func buyCardSchemeHandler(cdc *codec.Codec, cliCtx context.CLIContext) http.Hand
 
 type saveCardContentReq struct {
 	BaseReq rest.BaseReq `json:"base_req"`
-	CardId	string			 `json:"cardid"`
+	CardId  string       `json:"cardid"`
 	Content string       `json:"content"`
 	Owner   string       `json:"owner"`
 }
-
 
 func saveCardContentHandler(cdc *codec.Codec, cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -114,7 +113,7 @@ func saveCardContentHandler(cdc *codec.Codec, cliCtx context.CLIContext) http.Ha
 			return
 		}
 
-		cardId, err := strconv.ParseUint(req.CardId, 10, 64);
+		cardId, err := strconv.ParseUint(req.CardId, 10, 64)
 		if err != nil {
 			return
 		}
@@ -139,11 +138,10 @@ func saveCardContentHandler(cdc *codec.Codec, cliCtx context.CLIContext) http.Ha
 	}
 }
 
-
 type voteCardReq struct {
-	BaseReq  rest.BaseReq	`json:"base_req"`
-	VoteType string   	  `json:"votetype"`
-	CardId	 string				`json:"cardid"`
+	BaseReq  rest.BaseReq `json:"base_req"`
+	VoteType string       `json:"votetype"`
+	CardId   string       `json:"cardid"`
 	Voter    string       `json:"voter"`
 }
 
@@ -161,7 +159,7 @@ func voteCardHandler(cdc *codec.Codec, cliCtx context.CLIContext) http.HandlerFu
 			return
 		}
 
-		cardId, err := strconv.ParseUint(req.CardId, 10, 64);
+		cardId, err := strconv.ParseUint(req.CardId, 10, 64)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -193,9 +191,9 @@ func voteCardHandler(cdc *codec.Codec, cliCtx context.CLIContext) http.HandlerFu
 }
 
 type transferCardReq struct {
-	BaseReq rest.BaseReq	`json:"base_req"`
-	CardId	string				`json:"cardid"`
-	Sender	string				`json:"sender"`
+	BaseReq  rest.BaseReq `json:"base_req"`
+	CardId   string       `json:"cardid"`
+	Sender   string       `json:"sender"`
 	Receiver string       `json:"receiver"`
 }
 
@@ -213,7 +211,7 @@ func transferCardHandler(cdc *codec.Codec, cliCtx context.CLIContext) http.Handl
 			return
 		}
 
-		cardId, err := strconv.ParseUint(req.CardId, 10, 64);
+		cardId, err := strconv.ParseUint(req.CardId, 10, 64)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -244,10 +242,10 @@ func transferCardHandler(cdc *codec.Codec, cliCtx context.CLIContext) http.Handl
 }
 
 type donateToCardReq struct {
-	BaseReq rest.BaseReq 	`json:"base_req"`
-	CardId	string				`json:"cardid"`
-	Amount	string    		`json:"amount"`
-	Donator string				`json:"donator"`
+	BaseReq rest.BaseReq `json:"base_req"`
+	CardId  string       `json:"cardid"`
+	Amount  string       `json:"amount"`
+	Donator string       `json:"donator"`
 }
 
 func donateToCardHandler(cdc *codec.Codec, cliCtx context.CLIContext) http.HandlerFunc {
@@ -264,7 +262,7 @@ func donateToCardHandler(cdc *codec.Codec, cliCtx context.CLIContext) http.Handl
 			return
 		}
 
-		cardId, err := strconv.ParseUint(req.CardId, 10, 64);
+		cardId, err := strconv.ParseUint(req.CardId, 10, 64)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -296,9 +294,9 @@ func donateToCardHandler(cdc *codec.Codec, cliCtx context.CLIContext) http.Handl
 
 type createUserReq struct {
 	BaseReq rest.BaseReq `json:"base_req"`
-	NewUser	string			 `json:"new_user"`
-	Creator string    	 `json:"creator"`
-	Alias	string				 `json:"alias"`
+	NewUser string       `json:"new_user"`
+	Creator string       `json:"creator"`
+	Alias   string       `json:"alias"`
 }
 
 func createUserHandler(cdc *codec.Codec, cliCtx context.CLIContext) http.HandlerFunc {
