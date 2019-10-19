@@ -81,6 +81,7 @@ func handleMsgSaveCardContent(ctx sdk.Context, keeper Keeper, msg MsgSaveCardCon
 	card.VotePool.Add(sdk.NewInt64Coin("credits", 10))
 
 	card.Content = []byte(msg.Content)
+	card.Status = "prototype"
 	keeper.SetCard(ctx, msg.CardId, card)
 
 	return sdk.Result{}
@@ -104,9 +105,8 @@ func handleMsgVoteCard(ctx sdk.Context, keeper Keeper, msg MsgVoteCard) sdk.Resu
 	// if the vote right is valid, get the Card
 	card := keeper.GetCard(ctx, msg.CardId)
 
-	// check if card status is valid // TODO enable
-
-	if card.Status != "permanent" && card.Status != "trial" {
+	// check if card status is valid // TODO remove prototype as soon as the concile exists
+	if card.Status != "permanent" && card.Status != "trial" && card.Status != "prototype" {
 		return sdk.ErrUnknownRequest("Voting on a card is only possible if it is in trial or a permanent card").Result()
 	}
 
@@ -131,6 +131,8 @@ func handleMsgVoteCard(ctx sdk.Context, keeper Keeper, msg MsgVoteCard) sdk.Resu
 	}
 
 	keeper.SetCard(ctx, msg.CardId, card)
+
+	keeper.RemoveVoteRight(ctx, msg.Voter, rightsIndex)
 
 	return sdk.Result{}
 }
