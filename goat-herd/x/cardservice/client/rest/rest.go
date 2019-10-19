@@ -20,6 +20,12 @@ const (
 	restName = "card"
 )
 
+func corsMiddleware(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			  w.Header().Set("Access-Control-Allow-Origin", "*")
+    })
+}
+
 // RegisterRoutes - Central function to define routes that get registered by the main application
 func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, cdc *codec.Codec, storeName string) {
 	r.HandleFunc(fmt.Sprintf("/%s/buy_card_scheme", storeName), buyCardSchemeHandler(cdc, cliCtx)).Methods("POST")
@@ -32,6 +38,10 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, cdc *codec.Codec, 
 	r.HandleFunc(fmt.Sprintf("/%s/card/{%s}", storeName, restName), resolveCardHandler(cdc, cliCtx, storeName)).Methods("GET")
 	r.HandleFunc(fmt.Sprintf("/%s/cards", storeName), resolveCardsHandler(cdc, cliCtx, storeName)).Methods("GET")
 	r.HandleFunc(fmt.Sprintf("/%s/whois/{%s}", storeName, restName), whoIsHandler(cdc, cliCtx, storeName)).Methods("GET")
+	r.HandleFunc(fmt.Sprintf("/%s/votable-cards/{%s}", storeName, restName), resolveVotableCardsHandler(cdc, cliCtx, storeName)).Methods("GET")
+
+  r.Use(mux.CORSMethodMiddleware(r))
+	r.Use(corsMiddleware)
 }
 
 type buyCardSchemeReq struct {
