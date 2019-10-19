@@ -38,6 +38,11 @@ button {
   cursor: pointer;
 }
 
+button:hover {
+  transition: background-color 200ms;
+  background-color: lightgray;
+}
+
 .creator {
   line-height: 1.5em;
   display: grid;

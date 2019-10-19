@@ -1,5 +1,12 @@
 <template>
   <content-container-component>
+    <vue-swing
+      @throwout="throwout"
+      @throwin="throwin"
+      :config="config"
+    >
+      <div class="box">Throw me!</div>
+    </vue-swing>
     <p v-if="$route.query.redirect">Bitte logge dich ein!</p>
     <p v-if="loginError">Login fehlgeschlagen!</p>
     <form @submit.prevent="login">
