@@ -3,20 +3,36 @@ services:
   blockchain:
     build: .
     command: /go/bin/csd start
+    ports:
+      - 26657:26657
+    networks:
+      hostnet: {}
 
   goat:
     build: .
     command: ./scripts/startRESTserver.sh
     container_name: goat
+    depends_on:
+      - blockchain
     ports:
       - 1317:1317
+    networks:
+      hostnet: {}
 
   herd:
     image: nginx:latest
     container_name: herd
+    depends_on:
+      - goat
     volumes:
       - ./config/nginx.conf:/etc/nginx/conf.d/default.conf
     ports:
       - 80:80
       - 443:443
     command: /bin/bash -c "exec nginx -g 'daemon off;'"
+    networks:
+      hostnet: {}
+
+networks:
+  hostnet:
+    external: true
