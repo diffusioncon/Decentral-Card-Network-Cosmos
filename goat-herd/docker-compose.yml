@@ -2,11 +2,9 @@ version: '3'
 services:
   blockchain:
     build: .
-    command: /go/bin/csd start
+    command: /go/bin/csd start --rpc.laddr tcp://0.0.0.0:26657
     ports:
       - 26657:26657
-    networks:
-      hostnet: {}
 
   goat:
     build: .
@@ -16,8 +14,6 @@ services:
       - blockchain
     ports:
       - 1317:1317
-    networks:
-      hostnet: {}
 
   herd:
     image: nginx:latest
@@ -30,9 +26,3 @@ services:
       - 80:80
       - 443:443
     command: /bin/bash -c "exec nginx -g 'daemon off;'"
-    networks:
-      hostnet: {}
-
-networks:
-  hostnet:
-    external: true
