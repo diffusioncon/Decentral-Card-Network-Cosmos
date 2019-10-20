@@ -10,6 +10,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import ContentContainerComponent from '@/components/ContentContainerComponent'
 import CardComponent from '@/components/CardComponent'
 
@@ -43,7 +44,8 @@ export default {
     }
   },
   mounted () {
-
+    axios.get('http://78.46.200.30/cardservice/cards ')
+      .then(res => (console.log(res)))
   }
 }
 </script>

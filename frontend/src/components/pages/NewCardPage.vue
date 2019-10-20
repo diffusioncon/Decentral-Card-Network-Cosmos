@@ -106,6 +106,7 @@
         <br>
         <button v-if="activeStep > 0" @click="activeStep--">back</button>
         <button v-if="activeStep < 4" @click="activeStep++">next</button>
+        <button @click="buyCardScheme()">Buy Card-Scheme</button>
       </div>
       <div class="col-visual">
         <CardComponent v-bind:model="model"
@@ -206,6 +207,32 @@ export default {
       } */
       return [1, 2, 3, 4, 5]
     },
+    buyCardScheme () {
+      axios.get('http://78.46.200.30/auth/accounts/' + localStorage.cosmosAddress)
+        .then(userdata => {
+          axios.post('http://78.46.200.30/cardservice/buy_card_scheme', {
+            'base_req': {
+              'from': localStorage.cosmosAddress,
+              'chain_id': 'testCardchain',
+              'gas': 'auto',
+              'gas_adjustment': '1.5'
+            },
+            'amount': '800credits',
+            'buyer': localStorage.cosmosAddress
+          }).then(response => {
+            let signed = signTx(response.data, localStorage.cosmosMnemonic, 'testCardchain', userdata.data.value.account_number, userdata.data.value.sequence)
+
+            console.log(signed)
+
+            axios.post('http://78.46.200.30/txs', {
+              'tx': signed.value,
+              'mode': 'block'
+            }).then(response => {
+              console.log(response)
+            })
+          })
+        })
+    },
     generateCostArray () {
       let finalArr = []
 
@@ -252,21 +279,28 @@ export default {
           'gas_adjustment': '1.5'
         },
         'owner': localStorage.cosmosAddress,
-        'content': 'banane',
+        'content': JSON.stringify(newCard),
         'cardid': '1'
       }
 
       axios.get('http://78.46.200.30/auth/accounts/' + localStorage.cosmosAddress)
-        .then(response => (console.log(response)))
+        .then(userdata => {
+          console.log(userdata)
+          axios.put(
+            'http://78.46.200.30/cardservice/save_card_content',
+            request).then(response => {
+            let signed = signTx(response.data, localStorage.cosmosMnemonic, 'testCardchain', userdata.data.value.account_number, userdata.data.value.sequence)
 
-      axios.put(
-        'http://78.46.200.30/cardservice/save_card_content',
-        request).then(response => {
-        let signed = signTx(response.data, localStorage.cosmosMnemonic, 'testCardchain', localStorage.cosmosAccountNumber, 0)
-        axios.post('http://78.46.200.30/txs', signed).then(response => {
-          console.log(response)
+            console.log(signed)
+
+            axios.post('http://78.46.200.30/txs', {
+              'tx': signed.value,
+              'mode': 'block'
+            }).then(response => {
+              console.log(response)
+            })
+          })
         })
-      })
     }
   },
   saveDraft () {
