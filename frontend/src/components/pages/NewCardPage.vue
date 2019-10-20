@@ -122,6 +122,7 @@ import ContentContainerComponent from '@/components/ContentContainerComponent'
 import $RefParser from 'json-schema-ref-parser'
 import CardComponent from '../CardComponent'
 
+// eslint-disable-next-line no-unused-vars
 import { signTx } from 'signcosmostx/signStuff'
 
 export default {
@@ -231,6 +232,7 @@ export default {
     },
     saveSubmit () {
       let costArray = this.generateCostArray()
+      // eslint-disable-next-line no-unused-vars
       let newCard = {
         [this.model.type]: {
           'Name': this.model.name,
@@ -242,10 +244,6 @@ export default {
         }
       }
 
-      axios.get('http://v220190910354396996.luckysrv.de:1500/auth/accounts/' + localStorage.cosmosAddress).then(response => {
-
-      })
-
       let request = {
         'base_req': {
           'from': localStorage.cosmosAddress,
@@ -254,21 +252,20 @@ export default {
           'gas_adjustment': '1.5'
         },
         'owner': localStorage.cosmosAddress,
-        'content': 'shitcard',
+        'content': 'banane',
         'cardid': '1'
       }
 
+      axios.get('http://78.46.200.30/auth/accounts/' + localStorage.cosmosAddress)
+        .then(response => (console.log(response)))
+
       axios.put(
-        'http://v220190910354396996.luckysrv.de:1500/cardservice/save_card_content',
+        'http://78.46.200.30/cardservice/save_card_content',
         request).then(response => {
-        let signed = signTx(response.data, localStorage.cosmosMnemonic, 'testCardchain', localStorage.cosmosAccountNumber, 1)
-        console.log(signed)
-        axios.post('http://v220190910354396996.luckysrv.de:1500/txs', signed).then(response => {
+        let signed = signTx(response.data, localStorage.cosmosMnemonic, 'testCardchain', localStorage.cosmosAccountNumber, 0)
+        axios.post('http://78.46.200.30/txs', signed).then(response => {
           console.log(response)
         })
-      }).catch(function (error) {
-        // handle error
-        console.log(error)
       })
     }
   },

@@ -6,13 +6,8 @@
         @throwout="throwout"
         @throwin="throwin"
         :config="config"
+        class="card"
       >
-        <div class="box">
-          <CardComponent  v-bind:model="sampleCard" v-bind:active-step="3"></CardComponent>
-        </div>
-        <div class="box">
-          <CardComponent  v-bind:model="sampleCard" v-bind:active-step="3"></CardComponent>
-        </div>
         <div class="box">
           <CardComponent  v-bind:model="sampleCard" v-bind:active-step="3"></CardComponent>
         </div>
@@ -23,11 +18,23 @@
 
 <script>
 import CardComponent from '../CardComponent'
+import VueSwing from 'vue-swing'
+
 export default {
   name: 'VotingPage',
   components: {CardComponent},
   data () {
     return {
+      config: {
+        allowedDirections: [
+          VueSwing.Direction.UP,
+          VueSwing.Direction.DOWN,
+          VueSwing.Direction.LEFT,
+          VueSwing.Direction.RIGHT
+        ],
+        minThrowOutDistance: 250,
+        maxThrowOutDistance: 300
+      },
       sampleCard: {
         name: 'Name',
         description: '',
@@ -49,6 +56,14 @@ export default {
         defense: 0,
         attack: 0
       }
+    }
+  },
+  methods: {
+    throwout () {
+      console.log('THROWOUT')
+    },
+    throwin () {
+      console.log('THROWIN')
     }
   }
 }

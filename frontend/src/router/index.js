@@ -6,6 +6,7 @@ import AboutPage from '@/components/pages/AboutPage'
 import LoginPage from '@/components/pages/LoginPage'
 import RegisterPage from '@/components/pages/RegisterPage'
 import VotingPage from '../components/pages/VotingPage'
+import AccountPage from '../components/pages/AccountPage'
 
 Vue.use(Router)
 
@@ -38,8 +39,8 @@ export default new Router({
     },
     {
       path: '/me',
-      name: 'Registrieren',
-      component: RegisterPage
+      name: 'Account',
+      component: AccountPage
     },
     {
       path: '/vote',
