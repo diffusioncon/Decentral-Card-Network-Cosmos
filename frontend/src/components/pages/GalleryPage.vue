@@ -45,7 +45,15 @@ export default {
   },
   mounted () {
     axios.get('http://78.46.200.30/cardservice/cards ')
-      .then(res => (console.log(res)))
+      .then(res => {
+        console.log(res)
+
+        let cardData = res.data.data
+
+        cardData.forEach(function (card) {
+          this.cards.add('ELEMENT')
+        })
+      })
   }
 }
 </script>

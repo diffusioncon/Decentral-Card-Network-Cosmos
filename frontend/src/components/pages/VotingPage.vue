@@ -3,8 +3,9 @@
     <h2>Card Voting</h2>
     <div class="voter">
       <vue-swing
-        @throwout="throwout"
-        @throwin="throwin"
+        @throwoutup="vote(1, 'fair_enough')"
+        @throwoutright="vote(1, 'overpowered')"
+        @throwoutleft="vote(1, 'underpowered')"
         :config="config"
         class="card"
       >
@@ -19,12 +20,17 @@
 <script>
 import CardComponent from '../CardComponent'
 import VueSwing from 'vue-swing'
+import axios from 'axios'
+
+// eslint-disable-next-line no-unused-vars
+import { signTx } from 'signcosmostx/signStuff'
 
 export default {
   name: 'VotingPage',
   components: {CardComponent},
   data () {
     return {
+      cards: [],
       config: {
         allowedDirections: [
           VueSwing.Direction.UP,
@@ -58,12 +64,42 @@ export default {
       }
     }
   },
+  mounted() {
+    axios.get('http://78.46.200.30/cardservice/votable_cards/' + localStorage.cosmosAddress)
+      .then(res => (console.log(res)))
+  },
   methods: {
-    throwout () {
+    vote (cardid, type) {
       console.log('THROWOUT')
-    },
-    throwin () {
-      console.log('THROWIN')
+
+      axios.get('http://78.46.200.30/auth/accounts/' + localStorage.cosmosAddress)
+        .then(userdata => {
+          console.log(userdata)
+          axios.put(
+            'http://78.46.200.30/cardservice/vote_card',
+            {
+              'base_req': {
+                'from': localStorage.cosmosAddress,
+                'chain_id': 'testCardchain',
+                'gas': 'auto',
+                'gas_adjustment': '1.5'
+              },
+              'voter': localStorage.cosmosAddress,
+              'votetype': type,
+              'cardid': '' + cardid
+            }).then(response => {
+            let signed = signTx(response.data, localStorage.cosmosMnemonic, 'testCardchain', userdata.data.value.account_number, userdata.data.value.sequence)
+
+            console.log(signed)
+
+            axios.post('http://78.46.200.30/txs', {
+              'tx': signed.value,
+              'mode': 'block'
+            }).then(response => {
+              console.log(response)
+            })
+          })
+        })
     }
   }
 }
