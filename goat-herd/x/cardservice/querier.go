@@ -1,6 +1,7 @@
 package cardservice
 
 import (
+	"encoding/binary"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -146,9 +147,8 @@ func queryVotableCards(ctx sdk.Context, path []string, req abci.RequestQuery, ke
 	for ; iterator.Valid(); iterator.Next() {
 
 		var gottenCard Card
-		var cardId uint64
+		cardId := binary.BigEndian.Uint64(iterator.Key())
 		keeper.cdc.MustUnmarshalBinaryBare(iterator.Value(), &gottenCard)
-		keeper.cdc.MustUnmarshalBinaryBare(iterator.Key(), &cardId)
 
 		// TODO check if json.Marshal is fair enough here
 		b, err := json.Marshal(gottenCard)
