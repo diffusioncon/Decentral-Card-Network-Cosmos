@@ -12,7 +12,7 @@ npm install
 npm run dev
 
 
-goat-herd - the cosmos blockchain
+# goat-herd - the cosmos blockchain
 
 sh scripts/setup.sh
 
